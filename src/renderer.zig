@@ -46,4 +46,8 @@ pub const Renderer = struct {
     pub fn clear(self: *Renderer, g: Glyph) void {
         @memset(self.back.cells, g);
     }
+
+    pub fn present(self: *Renderer) void {
+        _ = self;
+    }
 };

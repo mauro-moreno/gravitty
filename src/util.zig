@@ -8,6 +8,10 @@ pub fn nowSeconds() f64 {
     return @as(f64, @floatFromInt(std.time.milliTimestamp())) / 1000;
 }
 
+pub fn sleepMs(ms: u64) void {
+    std.Thread.sleep(ms * std.time.ns_per_ms);
+}
+
 pub fn setDemoQuitAfterSeconds(seconds: f64) void {
     if (seconds > 0) {
         demo_quit_after_s = seconds;

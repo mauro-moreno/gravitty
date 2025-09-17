@@ -16,6 +16,16 @@ fn deinit(ctx: *anyopaque) void {
     _ = ctx;
 }
 
+fn update(ctx: *anyopaque, dt: f32) void {
+    _ = ctx;
+    _ = dt;
+}
+
+fn render(ctx: *anyopaque, r: *grav.renderer.Renderer) void {
+    _ = ctx;
+    _ = r;
+}
+
 pub fn main() !void {
     var gpa = std.heap.page_allocator;
 
@@ -33,7 +43,7 @@ pub fn main() !void {
     const ren = try grav.renderer.Renderer.init(W, H, back_cells, front_cells, .{});
     var eng = try grav.engine.Engine.init(ren, 60);
 
-    const cbs = grav.engine.Callbacks{ .init = init, .deinit = deinit };
+    const cbs = grav.engine.Callbacks{ .init = init, .deinit = deinit, .update = update, .render = render };
 
     eng.run(cbs, &g);
     eng.deinit();

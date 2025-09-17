@@ -9,8 +9,8 @@ const isFinite = std.math.isFinite;
 
 pub const Callbacks = struct {
     init: fn (*anyopaque) void,
-    // update: fn (*anyopaque, f32) void,
-    // render: fn (*anyopaque, *renderer.Renderer) !void,
+    update: fn (*anyopaque, f32) void,
+    render: fn (*anyopaque, *Renderer) void,
     deinit: fn (*anyopaque) void,
 };
 
@@ -28,11 +28,35 @@ pub const Engine = struct {
         const dt: f32 = 1.0 / @as(f32, @floatFromInt(self.target_hz));
         assert(isFinite(dt) and dt > 0);
 
+        const MAX_ACCUM_S: f32 = 0.25;
+        const MAX_STEPS_PER_TICK: u32 = 8;
+
+        var acc: f32 = 0.0;
+        var last = util.nowSeconds();
+
         cbs.init(user_ctx);
         defer cbs.deinit(user_ctx);
 
         while (true) {
             if (util.shouldQuitNonBlocking()) break;
+
+            const now = util.nowSeconds();
+            const frame_elapsed: f32 = @floatCast(@as(f64, now - last));
+            last = now;
+
+            acc += frame_elapsed;
+            if (acc > MAX_ACCUM_S) acc = MAX_ACCUM_S;
+
+            var steps: u32 = 0;
+            while (acc >= dt and steps < MAX_STEPS_PER_TICK) : (steps += 1) {
+                acc -= dt;
+                cbs.update(user_ctx, dt);
+            }
+
+            cbs.render(user_ctx, &self.ren);
+            self.ren.present();
+
+            util.sleepMs(@intCast(1000 / self.target_hz));
         }
     }
 
