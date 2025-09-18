@@ -2,6 +2,13 @@
     .name = .gravitty,
     .version = "0.0.1",
     .minimum_zig_version = "0.15.1",
-    .paths = .{""},
+    .paths = .{
+        "src",
+        "examples",
+        ".github",
+        "README.md",
+        "LICENSE",
+    },
+    .dependencies = .{},
     .fingerprint = 0x69d73369b7b1768,
 }
